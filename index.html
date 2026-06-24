@@ -1,0 +1,1165 @@
+
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MortgageWise Interactive Calculator</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom range input styling matching premium aesthetic */
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #10b981;
+      cursor: pointer;
+      border: 2px solid #1e293b;
+      transition: background 0.15s ease-in-out;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: #34d399;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #10b981;
+      cursor: pointer;
+      border: 2px solid #1e293b;
+      transition: background 0.15s ease-in-out;
+    }
+    input[type="range"]::-moz-range-thumb:hover {
+      background: #34d399;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans antialiased">
+
+  <!-- Header Banner -->
+  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="bg-emerald-500 text-slate-900 p-2.5 rounded-xl shadow-inner flex items-center justify-center">
+          <svg class="w-6 h-6 stroke-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-black tracking-tight text-white flex items-center gap-2">
+            MortgageWise <span class="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-semibold">Interactive</span>
+          </h1>
+          <p class="text-xs text-slate-400">Amortization, extra payments, & scenario comparison studio</p>
+        </div>
+      </div>
+      
+      <!-- Navigation Tabs -->
+      <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700 w-full sm:w-auto overflow-x-auto">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 whitespace-nowrap bg-emerald-500 text-slate-950 shadow-md">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+          Dashboard
+        </button>
+        <button onclick="switchTab('schedule')" id="tab-schedule" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-800">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          Amortization
+        </button>
+        <button onclick="switchTab('extra')" id="tab-extra" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-800">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Extra Payments
+        </button>
+        <button onclick="switchTab('compare')" id="tab-compare" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-800">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+          Compare Scenarios (<span id="compare-count">0</span>)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Side: Parameters Controls -->
+    <section class="lg:col-span-4 bg-slate-800/65 border border-slate-700/60 p-6 rounded-2xl shadow-xl flex flex-col gap-6 backdrop-blur-sm self-start">
+      <div class="border-b border-slate-700/70 pb-4">
+        <h2 class="text-md font-bold text-slate-200 flex items-center gap-2">
+          <svg class="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+          Loan Adjustments
+        </h2>
+      </div>
+
+      <!-- Slider & Input: Home Price -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+          <label class="text-xs font-semibold text-slate-400">Home Price</label>
+          <div class="relative">
+            <span class="absolute left-2 top-1.5 text-slate-500 text-sm">$</span>
+            <input
+              type="number"
+              id="input-home-price"
+              value="400000"
+              min="0"
+              oninput="syncInput('home-price', this.value)"
+              class="bg-slate-900 border border-slate-700 text-white rounded-lg pl-5 pr-2 py-1 text-right text-sm font-bold w-36 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+            />
+          </div>
+        </div>
+        <input
+          type="range"
+          id="range-home-price"
+          min="50000"
+          max="2000000"
+          step="5000"
+          value="400000"
+          oninput="syncInput('home-price', this.value)"
+          class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        />
+      </div>
+
+      <!-- Slider & Input: Down Payment -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+          <div class="flex flex-col">
+            <label class="text-xs font-semibold text-slate-400">Down Payment</label>
+            <span class="text-[10px] text-slate-500" id="label-down-payment">
+              $80,000 (20%)
+            </span>
+          </div>
+          <div class="flex items-center space-x-1">
+            <div class="relative">
+              <input
+                type="number"
+                id="input-down-payment-percent"
+                value="20"
+                min="0"
+                max="100"
+                oninput="syncInput('down-payment-percent', this.value)"
+                class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1 text-right text-sm font-bold w-16 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+              />
+              <span class="absolute right-2 top-1.5 text-slate-500 text-xs">%</span>
+            </div>
+          </div>
+        </div>
+        <input
+          type="range"
+          id="range-down-payment-percent"
+          min="0"
+          max="100"
+          step="1"
+          value="20"
+          oninput="syncInput('down-payment-percent', this.value)"
+          class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        />
+        <p class="text-[10px] text-amber-400 bg-amber-400/5 px-2 py-1 rounded border border-amber-400/10 hidden items-center gap-1" id="pmi-warning">
+          ⚠️ Down payment &lt; 20% requires PMI (<span id="warn-pmi-rate">0.75</span>%/yr)
+        </p>
+      </div>
+
+      <!-- Slider & Input: Interest Rate -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+          <label class="text-xs font-semibold text-slate-400">Annual Interest Rate</label>
+          <div class="relative">
+            <input
+              type="number"
+              step="0.01"
+              id="input-interest-rate"
+              value="6.5"
+              min="0"
+              oninput="syncInput('interest-rate', this.value)"
+              class="bg-slate-900 border border-slate-700 text-white rounded-lg px-2 py-1 text-right text-sm font-bold w-20 focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+            />
+            <span class="absolute right-2 top-1.5 text-slate-500 text-xs">%</span>
+          </div>
+        </div>
+        <input
+          type="range"
+          id="range-interest-rate"
+          min="1"
+          max="15"
+          step="0.1"
+          value="6.5"
+          oninput="syncInput('interest-rate', this.value)"
+          class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        />
+      </div>
+
+      <!-- Slider & Input: Loan Term -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+          <label class="text-xs font-semibold text-slate-400">Loan Term</label>
+          <div class="flex bg-slate-900 p-1 rounded-lg border border-slate-700" id="term-preset-buttons">
+            <button onclick="setLoanTermPreset(10)" class="term-btn px-2 py-0.5 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-colors" data-years="10">10Y</button>
+            <button onclick="setLoanTermPreset(15)" class="term-btn px-2 py-0.5 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-colors" data-years="15">15Y</button>
+            <button onclick="setLoanTermPreset(20)" class="term-btn px-2 py-0.5 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-colors" data-years="20">20Y</button>
+            <button onclick="setLoanTermPreset(30)" class="term-btn px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-500 text-slate-950" data-years="30">30Y</button>
+          </div>
+        </div>
+        <input
+          type="range"
+          id="range-loan-term"
+          min="5"
+          max="40"
+          step="1"
+          value="30"
+          oninput="syncInput('loan-term', this.value)"
+          class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+        />
+      </div>
+
+      <!-- Other Monthly Costs (Advanced) -->
+      <div class="pt-2 border-t border-slate-700/60">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Other Monthly Costs</h3>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-semibold text-slate-400 mb-1">Property Tax (Annual %)</label>
+            <div class="relative">
+              <input
+                type="number"
+                step="0.05"
+                id="input-property-tax"
+                value="1.2"
+                oninput="syncInput('property-tax', this.value)"
+                class="bg-slate-900 border border-slate-700 text-white rounded-lg p-1.5 text-sm font-semibold w-full focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+              />
+              <span class="absolute right-2 top-2 text-slate-500 text-[10px]">%</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-semibold text-slate-400 mb-1">Home Insur. (Annual $)</label>
+            <div class="relative">
+              <input
+                type="number"
+                id="input-home-insurance"
+                value="1200"
+                oninput="syncInput('home-insurance', this.value)"
+                class="bg-slate-900 border border-slate-700 text-white rounded-lg p-1.5 text-sm font-semibold w-full focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+              />
+              <span class="absolute right-2 top-2 text-slate-500 text-[10px]">$</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-semibold text-slate-400 mb-1">HOA Fees (Monthly $)</label>
+            <div class="relative">
+              <input
+                type="number"
+                id="input-hoa"
+                value="150"
+                oninput="syncInput('hoa', this.value)"
+                class="bg-slate-900 border border-slate-700 text-white rounded-lg p-1.5 text-sm font-semibold w-full focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+              />
+              <span class="absolute right-2 top-2 text-slate-500 text-[10px]">$</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-semibold text-slate-400 mb-1">PMI Rate (Annual %)</label>
+            <div class="relative">
+              <input
+                type="number"
+                step="0.05"
+                id="input-pmi"
+                value="0.75"
+                oninput="syncInput('pmi', this.value)"
+                class="bg-slate-900 border border-slate-700 text-white rounded-lg p-1.5 text-sm font-semibold w-full focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+              />
+              <span class="absolute right-2 top-2 text-slate-500 text-[10px]">%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Scenario Saver -->
+      <button
+        onclick="saveScenario()"
+        class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 border border-slate-600 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 mt-2"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Save to Comparison Board
+      </button>
+    </section>
+
+    <!-- Right Side: Content Area (Tab-driven pages) -->
+    <section class="lg:col-span-8 flex flex-col gap-6">
+
+      <!-- ================= DASHBOARD TAB ================= -->
+      <div id="content-dashboard" class="space-y-6">
+        
+        <!-- Summary Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/25 p-5 rounded-2xl relative overflow-hidden shadow-md">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Est. Monthly Payment</span>
+            <p class="text-3xl font-black text-white mt-1" id="sum-monthly-pay">$0</p>
+            <p class="text-[10px] text-slate-400 mt-1.5 flex items-center gap-1">
+              <span id="sum-sub-pi">P&I: $0</span>
+              <span>•</span>
+              <span id="sum-sub-tax">Tax: $0</span>
+            </p>
+            <div class="absolute right-2 bottom-2 text-emerald-500/10 pointer-events-none">
+              <svg class="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/80 border border-slate-700/60 p-5 rounded-2xl relative overflow-hidden shadow-md">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Interest Paid</span>
+            <p class="text-3xl font-black text-white mt-1" id="sum-total-interest">$0</p>
+            <p class="text-[10px] text-slate-500 mt-1.5" id="sum-savings-banner">No extra payments applied</p>
+          </div>
+
+          <div class="bg-slate-800/80 border border-slate-700/60 p-5 rounded-2xl relative overflow-hidden shadow-md">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Payoff Duration</span>
+            <p class="text-3xl font-black text-white mt-1" id="sum-duration">0 <span class="text-sm font-normal text-slate-400">Years</span></p>
+            <p class="text-[10px] text-slate-500 mt-1.5" id="sum-duration-banner">Full term schedule</p>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+          
+          <!-- Allocation Pie Chart -->
+          <div class="md:col-span-5 bg-slate-800/40 border border-slate-700/50 p-5 rounded-2xl flex flex-col justify-between">
+            <h3 class="text-sm font-bold text-slate-300 mb-4">Payment Allocation</h3>
+            
+            <div class="flex justify-center my-2 relative">
+              <svg width="180" height="180" viewBox="0 0 42 42" class="transform -rotate-90">
+                <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#1e293b" stroke-width="4" />
+                <circle id="pie-pi" cx="21" cy="21" r="15.915" fill="transparent" stroke="#10b981" stroke-width="4" stroke-dasharray="0 100" stroke-dashoffset="100" />
+                <circle id="pie-tax" cx="21" cy="21" r="15.915" fill="transparent" stroke="#3b82f6" stroke-width="4" stroke-dasharray="0 100" stroke-dashoffset="100" />
+                <circle id="pie-ins" cx="21" cy="21" r="15.915" fill="transparent" stroke="#f59e0b" stroke-width="4" stroke-dasharray="0 100" stroke-dashoffset="100" />
+                <circle id="pie-hoa" cx="21" cy="21" r="15.915" fill="transparent" stroke="#8b5cf6" stroke-width="4" stroke-dasharray="0 100" stroke-dashoffset="100" />
+                <circle id="pie-pmi" cx="21" cy="21" r="15.915" fill="transparent" stroke="#ec4899" stroke-width="4" stroke-dasharray="0 100" stroke-dashoffset="100" />
+              </svg>
+              <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span class="text-xs text-slate-400">Total</span>
+                <span class="text-lg font-black" id="pie-total-label">$0</span>
+              </div>
+            </div>
+
+            <!-- Legends -->
+            <div class="space-y-2 mt-4">
+              <div class="flex justify-between items-center text-xs">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 bg-emerald-500 rounded-full"></span> Principal & Interest</span>
+                <span class="font-semibold text-slate-200" id="leg-pi">$0</span>
+              </div>
+              <div class="flex justify-between items-center text-xs">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 bg-blue-500 rounded-full"></span> Property Tax</span>
+                <span class="font-semibold text-slate-200" id="leg-tax">$0</span>
+              </div>
+              <div class="flex justify-between items-center text-xs">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 bg-amber-500 rounded-full"></span> Home Insurance</span>
+                <span class="font-semibold text-slate-200" id="leg-ins">$0</span>
+              </div>
+              <div class="flex justify-between items-center text-xs">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 bg-purple-500 rounded-full"></span> HOA Fees</span>
+                <span class="font-semibold text-slate-200" id="leg-hoa">$0</span>
+              </div>
+              <div class="flex justify-between items-center text-xs" id="leg-pmi-container">
+                <span class="flex items-center gap-2"><span class="w-3 h-3 bg-pink-500 rounded-full"></span> PMI Insurance</span>
+                <span class="font-semibold text-slate-200" id="leg-pmi">$0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Amortization Area Projection -->
+          <div class="md:col-span-7 bg-slate-800/40 border border-slate-700/50 p-5 rounded-2xl flex flex-col justify-between">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-sm font-bold text-slate-300">Amortization Projection</h3>
+              <div class="flex items-center gap-2 text-[10px]">
+                <span class="flex items-center gap-1"><span class="w-2.5 h-0.5 bg-slate-500 inline-block"></span> Standard</span>
+                <span class="flex items-center gap-1"><span class="w-2.5 h-0.5 bg-emerald-400 inline-block"></span> Extra Plan</span>
+              </div>
+            </div>
+
+            <!-- SVG Graph Container -->
+            <div class="h-48 w-full relative">
+              <svg id="projection-svg" viewBox="0 0 300 100" class="w-full h-full" preserveAspectRatio="none">
+                <!-- Grid lines -->
+                <line x1="0" y1="10" x2="300" y2="10" stroke="#334155" stroke-width="0.5" stroke-dasharray="3 3" />
+                <line x1="0" y1="50" x2="300" y2="50" stroke="#334155" stroke-width="0.5" stroke-dasharray="3 3" />
+                <line x1="0" y1="90" x2="300" y2="90" stroke="#334155" stroke-width="0.5" stroke-dasharray="3 3" />
+
+                <!-- Standard Polyline -->
+                <polyline id="polyline-std" fill="rgba(100, 116, 139, 0.05)" stroke="#64748b" stroke-width="2" points="0,90 300,90" />
+                <!-- Extra Polyline -->
+                <polyline id="polyline-ext" fill="rgba(52, 211, 153, 0.1)" stroke="#34d399" stroke-width="2.5" points="0,90 300,90" />
+              </svg>
+            </div>
+            <div class="flex justify-between text-[10px] text-slate-500 mt-2">
+              <span>Year 1</span>
+              <span id="label-mid-year">Year 15</span>
+              <span id="label-end-year">Year 30</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Pro-tip box -->
+        <div class="bg-slate-800/30 border border-slate-700/40 p-4 rounded-xl flex items-center gap-3">
+          <span class="text-2xl">💡</span>
+          <p class="text-xs text-slate-400">
+            <strong class="text-slate-200">Pro-Tip:</strong> Paying equity earlier reduces your overall loan term exponentially. Standard scheduling front-loads interest, so any additional amount speeds up complete freedom from debt!
+          </p>
+        </div>
+      </div>
+
+
+      <!-- ================= AMORTIZATION TAB ================= -->
+      <div id="content-schedule" class="bg-slate-800 border border-slate-700/80 p-5 rounded-2xl shadow-md space-y-4 hidden">
+        <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+          <div>
+            <h3 class="text-md font-bold text-slate-200">Amortization Ledger</h3>
+            <p class="text-xs text-slate-400">Annual summary detailing standard vs. prepayment schedules</p>
+          </div>
+          <div class="bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 text-xs text-slate-300 font-semibold">
+            Term: <span id="schedule-term-badge">30</span> Years
+          </div>
+        </div>
+
+        <div class="overflow-x-auto max-h-96">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-700 text-[11px] uppercase text-slate-400 tracking-wider">
+                <th class="py-2 px-3">Year</th>
+                <th class="py-2 px-3">End Balance (Std)</th>
+                <th class="py-2 px-3">End Balance (Extra)</th>
+                <th class="py-2 px-3">Interest Cumulative</th>
+                <th class="py-2 px-3">Equity Built</th>
+              </tr>
+            </thead>
+            <tbody id="schedule-table-body" class="divide-y divide-slate-700/50 text-xs text-slate-300">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <!-- ================= EXTRA PAYMENTS TAB ================= -->
+      <div id="content-extra" class="bg-slate-800 border border-slate-700/80 p-5 rounded-2xl shadow-md space-y-6 hidden">
+        <div class="border-b border-slate-700 pb-4">
+          <h3 class="text-md font-bold text-slate-200">Extra Principal Payments Planner</h3>
+          <p class="text-xs text-slate-400">Simulate prepayment scenarios and track payoff acceleration</p>
+        </div>
+
+        <!-- Presets -->
+        <div class="flex gap-2">
+          <button onclick="applyExtraPreset('none')" class="bg-slate-900 border border-slate-700 hover:border-slate-500 text-xs font-semibold px-3 py-1.5 rounded-lg text-slate-300 transition-colors">
+            Clear Extras
+          </button>
+          <button onclick="applyExtraPreset('moderate')" class="bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 text-xs font-semibold px-3 py-1.5 rounded-lg text-emerald-400 transition-colors">
+            Moderate (+ $150/mo)
+          </button>
+          <button onclick="applyExtraPreset('aggressive')" class="bg-indigo-500/10 border border-indigo-500/30 hover:bg-indigo-500/20 text-xs font-semibold px-3 py-1.5 rounded-lg text-indigo-400 transition-colors">
+            Aggressive (+ $400/mo)
+          </button>
+        </div>
+
+        <!-- Extra Sliders -->
+        <div class="space-y-5 pt-2">
+          
+          <!-- Extra Monthly -->
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <label class="text-xs font-semibold text-slate-300">Extra Monthly Payment</label>
+              <span class="text-xs font-black text-emerald-400" id="label-extra-monthly">$0 / month</span>
+            </div>
+            <input
+              type="range"
+              id="range-extra-monthly"
+              min="0"
+              max="2000"
+              step="25"
+              value="0"
+              oninput="syncExtraInput('monthly', this.value)"
+              class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+            />
+          </div>
+
+          <!-- Extra Annual -->
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <label class="text-xs font-semibold text-slate-300">Extra Annual Payment</label>
+              <span class="text-xs font-black text-emerald-400" id="label-extra-yearly">$0 / year</span>
+            </div>
+            <input
+              type="range"
+              id="range-extra-yearly"
+              min="0"
+              max="10000"
+              step="100"
+              value="0"
+              oninput="syncExtraInput('yearly', this.value)"
+              class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+            />
+          </div>
+
+          <!-- One Time Extra -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-700/60">
+            <div class="space-y-1.5">
+              <label class="block text-[11px] font-semibold text-slate-400">One-Time Extra Payment ($)</label>
+              <input
+                type="number"
+                id="input-extra-onetime"
+                value="0"
+                min="0"
+                oninput="syncExtraInput('onetime', this.value)"
+                class="bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-sm font-semibold w-full focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+              />
+            </div>
+            <div class="space-y-1.5">
+              <label class="block text-[11px] font-semibold text-slate-400">Apply on Month (1 - 480)</label>
+              <input
+                type="number"
+                id="input-onetime-month"
+                value="1"
+                min="1"
+                oninput="syncExtraInput('onetime-month', this.value)"
+                class="bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-sm font-semibold w-full focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Outcome summary block -->
+        <div class="bg-slate-900 border border-slate-700/60 p-5 rounded-2xl grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Total Interest Saved</span>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span class="text-2xl font-black text-emerald-400" id="extra-savings-total">$0</span>
+              <span class="text-[10px] text-slate-500">less interest paid</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2" id="extra-savings-standard">
+              Standard Interest: $0
+            </p>
+          </div>
+
+          <div>
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Time Saved</span>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span class="text-2xl font-black text-teal-400" id="extra-time-saved">0.0 Years</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-2" id="extra-time-details">
+              Payoff occurs in Year 30 instead of 30
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ================= COMPARE TAB ================= -->
+      <div id="content-compare" class="bg-slate-800 border border-slate-700/80 p-5 rounded-2xl shadow-md space-y-6 hidden">
+        <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+          <div>
+            <h3 class="text-md font-bold text-slate-200">Comparison Dashboard</h3>
+            <p class="text-xs text-slate-400">Save and contrast multiple configurations side-by-side</p>
+          </div>
+          <span id="badge-compare-count" class="bg-emerald-500/10 text-emerald-400 text-xs px-2.5 py-1 rounded-full border border-emerald-500/20 font-bold">
+            0 Saved
+          </span>
+        </div>
+
+        <!-- Comparison Cards Space -->
+        <div id="compare-placeholder" class="py-12 text-center text-slate-500 flex flex-col items-center gap-3">
+          <div class="p-3 bg-slate-700/30 rounded-full text-slate-400">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 114 0v2m-4 0h4m-4 0H3m14 0h3m-3 0h-4" />
+            </svg>
+          </div>
+          <div>
+            <h4 class="font-semibold text-slate-300 text-sm">No scenarios saved yet</h4>
+            <p class="text-xs text-slate-500 mt-1">Adjust parameters on the left and click "Save to Comparison Board" to save layouts.</p>
+          </div>
+        </div>
+
+        <div id="compare-cards-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 hidden">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-slate-800 mt-12 py-8 text-center">
+    <div class="max-w-7xl mx-auto px-4 text-slate-500 text-xs">
+      <p>© <span id="footer-year">2026</span> MortgageWise Studio. All calculations are estimates. Consult an authorized lender prior to committing to a financial strategy.</p>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript Logic -->
+  <script>
+    // Set dynamic footer year
+    document.getElementById('footer-year').innerText = new Date().getFullYear();
+
+    // --- APPLICATION STATE ---
+    const state = {
+      homePrice: 400000,
+      downPaymentPercent: 20,
+      interestRate: 6.5,
+      loanTerm: 30,
+      propertyTaxRate: 1.2,
+      homeInsurance: 1200,
+      hoaFees: 150,
+      pmiRate: 0.75,
+      
+      extraMonthly: 0,
+      extraYearly: 0,
+      extraOneTime: 0,
+      oneTimeMonth: 1,
+
+      activeTab: 'dashboard',
+      comparisonScenarios: []
+    };
+
+    // --- TAB SWITCHER ---
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      
+      // Update Tab CSS
+      const tabs = ['dashboard', 'schedule', 'extra', 'compare'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        if (t === tabId) {
+          btn.className = "flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 whitespace-nowrap bg-emerald-500 text-slate-950 shadow-md";
+        } else {
+          btn.className = "flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 whitespace-nowrap text-slate-400 hover:text-white hover:bg-slate-800";
+        }
+      });
+
+      // Show/Hide page elements
+      tabs.forEach(t => {
+        const el = document.getElementById(`content-${t}`);
+        if (t === tabId) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+
+      calculateAndRender();
+    }
+
+    // --- PARAMETER SYNCHRONIZATION ---
+    function syncInput(field, val) {
+      const parsed = parseFloat(val) || 0;
+      
+      switch(field) {
+        case 'home-price':
+          state.homePrice = parsed;
+          document.getElementById('input-home-price').value = parsed;
+          document.getElementById('range-home-price').value = parsed;
+          break;
+        case 'down-payment-percent':
+          state.downPaymentPercent = Math.min(100, Math.max(0, parsed));
+          document.getElementById('input-down-payment-percent').value = state.downPaymentPercent;
+          document.getElementById('range-down-payment-percent').value = state.downPaymentPercent;
+          break;
+        case 'interest-rate':
+          state.interestRate = parsed;
+          document.getElementById('input-interest-rate').value = parsed;
+          document.getElementById('range-interest-rate').value = parsed;
+          break;
+        case 'loan-term':
+          state.loanTerm = parsed;
+          document.getElementById('range-loan-term').value = parsed;
+          updateTermPresetButtons(parsed);
+          break;
+        case 'property-tax':
+          state.propertyTaxRate = parsed;
+          break;
+        case 'home-insurance':
+          state.homeInsurance = parsed;
+          break;
+        case 'hoa':
+          state.hoaFees = parsed;
+          break;
+        case 'pmi':
+          state.pmiRate = parsed;
+          break;
+      }
+
+      calculateAndRender();
+    }
+
+    function syncExtraInput(field, val) {
+      const parsed = parseFloat(val) || 0;
+
+      switch(field) {
+        case 'monthly':
+          state.extraMonthly = parsed;
+          document.getElementById('range-extra-monthly').value = parsed;
+          document.getElementById('label-extra-monthly').innerText = `$${parsed} / month`;
+          break;
+        case 'yearly':
+          state.extraYearly = parsed;
+          document.getElementById('range-extra-yearly').value = parsed;
+          document.getElementById('label-extra-yearly').innerText = `$${parsed} / year`;
+          break;
+        case 'onetime':
+          state.extraOneTime = parsed;
+          break;
+        case 'onetime-month':
+          state.oneTimeMonth = Math.max(1, Math.min(state.loanTerm * 12, parsed));
+          document.getElementById('input-onetime-month').value = state.oneTimeMonth;
+          break;
+      }
+
+      calculateAndRender();
+    }
+
+    function setLoanTermPreset(years) {
+      state.loanTerm = years;
+      document.getElementById('range-loan-term').value = years;
+      updateTermPresetButtons(years);
+      calculateAndRender();
+    }
+
+    function updateTermPresetButtons(years) {
+      const btns = document.querySelectorAll('.term-btn');
+      btns.forEach(btn => {
+        const btnYears = parseInt(btn.getAttribute('data-years'));
+        if (btnYears === years) {
+          btn.className = "term-btn px-2 py-0.5 text-xs font-bold rounded-md bg-emerald-500 text-slate-950";
+        } else {
+          btn.className = "term-btn px-2 py-0.5 text-xs font-bold rounded-md text-slate-400 hover:text-white transition-colors";
+        }
+      });
+    }
+
+    function applyExtraPreset(preset) {
+      if (preset === 'moderate') {
+        state.extraMonthly = 150;
+        state.extraYearly = 1000;
+      } else if (preset === 'aggressive') {
+        state.extraMonthly = 400;
+        state.extraYearly = 3000;
+      } else {
+        state.extraMonthly = 0;
+        state.extraYearly = 0;
+        state.extraOneTime = 0;
+      }
+
+      document.getElementById('range-extra-monthly').value = state.extraMonthly;
+      document.getElementById('label-extra-monthly').innerText = `$${state.extraMonthly} / month`;
+      
+      document.getElementById('range-extra-yearly').value = state.extraYearly;
+      document.getElementById('label-extra-yearly').innerText = `$${state.extraYearly} / year`;
+
+      document.getElementById('input-extra-onetime').value = state.extraOneTime;
+
+      calculateAndRender();
+    }
+
+    // --- CORE MATH & RENDERING ---
+    function calculateAndRender() {
+      // Basic math parameters
+      const downPaymentAmount = Math.round((state.homePrice * state.downPaymentPercent) / 100);
+      const loanAmount = state.homePrice - downPaymentAmount;
+      
+      const r = state.interestRate / 100 / 12;
+      const totalMonths = state.loanTerm * 12;
+      const monthlyPropertyTax = (state.homePrice * (state.propertyTaxRate / 100)) / 12;
+      const monthlyInsurance = state.homeInsurance / 12;
+      
+      let baseMonthlyPI = 0;
+      if (r === 0) {
+        baseMonthlyPI = loanAmount / totalMonths;
+      } else {
+        baseMonthlyPI = loanAmount * (r * Math.pow(1 + r, totalMonths)) / (Math.pow(1 + r, totalMonths) - 1);
+      }
+
+      // PMI Visibility & Calculation
+      const pmiWarning = document.getElementById('pmi-warning');
+      const warnPmiRate = document.getElementById('warn-pmi-rate');
+      let initialPMI = 0;
+      if (state.downPaymentPercent < 20) {
+        pmiWarning.classList.remove('hidden');
+        pmiWarning.classList.add('flex');
+        warnPmiRate.innerText = state.pmiRate;
+        initialPMI = (loanAmount * (state.pmiRate / 100)) / 12;
+      } else {
+        pmiWarning.classList.remove('flex');
+        pmiWarning.classList.add('hidden');
+      }
+
+      // Total Monthly Payment calculation
+      const totalMonthlyPayment = baseMonthlyPI + monthlyPropertyTax + monthlyInsurance + Number(state.hoaFees) + initialPMI;
+
+      // Create Schedule Data
+      let balanceStandard = loanAmount;
+      let balanceExtra = loanAmount;
+      const standardSchedule = [];
+      const extraSchedule = [];
+
+      let totalInterestStandard = 0;
+      let totalInterestExtra = 0;
+      let payoffMonthStandard = totalMonths;
+      let payoffMonthExtra = totalMonths;
+
+      for (let month = 1; month <= totalMonths; month++) {
+        // Standard Step
+        if (balanceStandard > 0) {
+          const interestPaidStd = balanceStandard * r;
+          let principalPaidStd = baseMonthlyPI - interestPaidStd;
+          if (principalPaidStd > balanceStandard) {
+            principalPaidStd = balanceStandard;
+          }
+          balanceStandard = Math.max(0, balanceStandard - principalPaidStd);
+          totalInterestStandard += interestPaidStd;
+
+          const hasPMIStd = (balanceStandard + principalPaidStd) > (state.homePrice * 0.8);
+          const pmiStd = hasPMIStd ? (loanAmount * (state.pmiRate / 100)) / 12 : 0;
+
+          standardSchedule.push({
+            month,
+            balance: balanceStandard,
+            interestPaid: interestPaidStd,
+            principalPaid: principalPaidStd,
+            pmi: pmiStd,
+            cumulativeInterest: totalInterestStandard,
+          });
+        } else if (payoffMonthStandard === totalMonths) {
+          payoffMonthStandard = month - 1;
+        }
+
+        // Extra Prepayments Step
+        if (balanceExtra > 0) {
+          const interestPaidExt = balanceExtra * r;
+          let basePrincipalPaidExt = baseMonthlyPI - interestPaidExt;
+
+          let currentExtra = Number(state.extraMonthly);
+          if (month % 12 === 0) currentExtra += Number(state.extraYearly);
+          if (month === Number(state.oneTimeMonth)) currentExtra += Number(state.extraOneTime);
+
+          let totalPrincipalPaidExt = basePrincipalPaidExt + currentExtra;
+          if (totalPrincipalPaidExt > balanceExtra) {
+            totalPrincipalPaidExt = balanceExtra;
+          }
+
+          balanceExtra = Math.max(0, balanceExtra - totalPrincipalPaidExt);
+          totalInterestExtra += interestPaidExt;
+
+          const hasPMIExt = (balanceExtra + totalPrincipalPaidExt) > (state.homePrice * 0.8);
+          const pmiExt = hasPMIExt ? (loanAmount * (state.pmiRate / 100)) / 12 : 0;
+
+          extraSchedule.push({
+            month,
+            balance: balanceExtra,
+            interestPaid: interestPaidExt,
+            principalPaid: totalPrincipalPaidExt,
+            pmi: pmiExt,
+            cumulativeInterest: totalInterestExtra,
+          });
+        } else if (payoffMonthExtra === totalMonths) {
+          payoffMonthExtra = month - 1;
+        }
+      }
+
+      // Gather Yearly Data
+      const yearlyAmortizationData = [];
+      const step = 12;
+      const limit = Math.max(standardSchedule.length, extraSchedule.length);
+
+      for (let i = 0; i < limit; i += step) {
+        const yearNum = Math.floor(i / 12) + 1;
+        const stdMonthIndex = Math.min(i + 11, standardSchedule.length - 1);
+        const extMonthIndex = Math.min(i + 11, extraSchedule.length - 1);
+
+        const stdRecord = standardSchedule[stdMonthIndex] || { balance: 0, cumulativeInterest: totalInterestStandard };
+        const extRecord = extraSchedule[extMonthIndex] || { balance: 0, cumulativeInterest: totalInterestExtra };
+
+        yearlyAmortizationData.push({
+          year: yearNum,
+          stdBalance: Math.round(stdRecord.balance),
+          stdInterest: Math.round(stdRecord.cumulativeInterest),
+          extBalance: Math.round(extRecord.balance),
+          extInterest: Math.round(extRecord.cumulativeInterest),
+        });
+      }
+
+      // Acceleration Metrics
+      const interestSaved = Math.max(0, totalInterestStandard - totalInterestExtra);
+      const monthsSaved = Math.max(0, payoffMonthStandard - payoffMonthExtra);
+      const yearsSaved = (monthsSaved / 12).toFixed(1);
+
+      // --- RENDERING UPDATE ---
+      
+      // Left-side down payment description
+      document.getElementById('label-down-payment').innerText = `$${downPaymentAmount.toLocaleString()} (${state.downPaymentPercent}%)`;
+
+      // Top metric summary boxes
+      document.getElementById('sum-monthly-pay').innerText = `$${Math.round(totalMonthlyPayment).toLocaleString()}`;
+      document.getElementById('sum-sub-pi').innerText = `P&I: $${Math.round(baseMonthlyPI).toLocaleString()}`;
+      document.getElementById('sum-sub-tax').innerText = `Tax: $${Math.round(monthlyPropertyTax).toLocaleString()}`;
+
+      document.getElementById('sum-total-interest').innerText = `$${Math.round(totalInterestExtra).toLocaleString()}`;
+      const savingsBanner = document.getElementById('sum-savings-banner');
+      if (interestSaved > 0) {
+        savingsBanner.innerText = `🎉 Saved $${Math.round(interestSaved).toLocaleString()} with extra pay!`;
+        savingsBanner.className = "text-[10px] text-emerald-400 mt-1.5 font-semibold";
+      } else {
+        savingsBanner.innerText = "No extra payments applied";
+        savingsBanner.className = "text-[10px] text-slate-500 mt-1.5";
+      }
+
+      document.getElementById('sum-duration').innerHTML = `${(payoffMonthExtra / 12).toFixed(1)} <span class="text-sm font-normal text-slate-400">Years</span>`;
+      const durationBanner = document.getElementById('sum-duration-banner');
+      if (monthsSaved > 0) {
+        durationBanner.innerText = `⚡ Shaved off ${yearsSaved} Years!`;
+        durationBanner.className = "text-[10px] text-emerald-400 mt-1.5 font-semibold";
+      } else {
+        durationBanner.innerText = "Full term schedule";
+        durationBanner.className = "text-[10px] text-slate-500 mt-1.5";
+      }
+
+      // Payment allocation donut/pie chart update
+      const piPct = (baseMonthlyPI / totalMonthlyPayment) * 100;
+      const taxPct = (monthlyPropertyTax / totalMonthlyPayment) * 100;
+      const insPct = (monthlyInsurance / totalMonthlyPayment) * 100;
+      const hoaPct = (state.hoaFees / totalMonthlyPayment) * 100;
+      const pmiPct = (initialPMI / totalMonthlyPayment) * 100;
+
+      const slices = [
+        { id: 'pie-pi', pct: piPct, color: '#10b981' },
+        { id: 'pie-tax', pct: taxPct, color: '#3b82f6' },
+        { id: 'pie-ins', pct: insPct, color: '#f59e0b' },
+        { id: 'pie-hoa', pct: hoaPct, color: '#8b5cf6' },
+        { id: 'pie-pmi', pct: pmiPct, color: '#ec4899' }
+      ];
+
+      let offset = 0;
+      slices.forEach(slice => {
+        const el = document.getElementById(slice.id);
+        const strokeDash = `${slice.pct} ${100 - slice.pct}`;
+        const strokeOffset = 100 - offset;
+        offset += slice.pct;
+        el.setAttribute('stroke-dasharray', strokeDash);
+        el.setAttribute('stroke-dashoffset', strokeOffset);
+      });
+
+      document.getElementById('pie-total-label').innerText = `$${Math.round(totalMonthlyPayment)}`;
+
+      // Legends
+      document.getElementById('leg-pi').innerText = `$${Math.round(baseMonthlyPI)}`;
+      document.getElementById('leg-tax').innerText = `$${Math.round(monthlyPropertyTax)}`;
+      document.getElementById('leg-ins').innerText = `$${Math.round(monthlyInsurance)}`;
+      document.getElementById('leg-hoa').innerText = `$${state.hoaFees}`;
+      
+      const legPmiContainer = document.getElementById('leg-pmi-container');
+      if (initialPMI > 0) {
+        legPmiContainer.classList.remove('hidden');
+        document.getElementById('leg-pmi').innerText = `$${Math.round(initialPMI)}`;
+      } else {
+        legPmiContainer.classList.add('hidden');
+      }
+
+      // Amortization SVG Area Projection Update
+      const stdPoly = document.getElementById('polyline-std');
+      const extPoly = document.getElementById('polyline-ext');
+      
+      const stdPoints = yearlyAmortizationData.map((d, idx) => {
+        const x = (idx / (yearlyAmortizationData.length - 1)) * 300;
+        const y = 90 - (d.stdBalance / state.homePrice) * 80;
+        return `${x},${y}`;
+      });
+
+      const extPoints = yearlyAmortizationData.map((d, idx) => {
+        const x = (idx / (yearlyAmortizationData.length - 1)) * 300;
+        const y = 90 - (d.extBalance / state.homePrice) * 80;
+        return `${x},${y}`;
+      });
+
+      stdPoly.setAttribute('points', `0,90 ${stdPoints.join(' ')} 300,90`);
+      extPoly.setAttribute('points', `0,90 ${extPoints.join(' ')} 300,90`);
+
+      document.getElementById('label-mid-year').innerText = `Year ${Math.round(state.loanTerm / 2)}`;
+      document.getElementById('label-end-year').innerText = `Year ${state.loanTerm}`;
+
+      // Amortization Ledger Tab update
+      document.getElementById('schedule-term-badge').innerText = state.loanTerm;
+      const tableBody = document.getElementById('schedule-table-body');
+      let tableHtml = '';
+      yearlyAmortizationData.forEach(yr => {
+        const equity = state.homePrice - yr.extBalance;
+        tableHtml += `
+          <tr class="hover:bg-slate-700/30 transition-colors">
+            <td class="py-2.5 px-3 font-semibold text-slate-100">Yr ${yr.year}</td>
+            <td class="py-2.5 px-3 text-slate-400">$${yr.stdBalance.toLocaleString()}</td>
+            <td class="py-2.5 px-3 font-medium text-emerald-400">$${yr.extBalance.toLocaleString()}</td>
+            <td class="py-2.5 px-3">$${yr.extInterest.toLocaleString()}</td>
+            <td class="py-2.5 px-3 text-teal-400">
+              $${equity.toLocaleString()} (${Math.round((equity / state.homePrice) * 100)}%)
+            </td>
+          </tr>
+        `;
+      });
+      tableBody.innerHTML = tableHtml;
+
+      // Prepayments Outcome Metrics update
+      document.getElementById('extra-savings-total').innerText = `$${Math.round(interestSaved).toLocaleString()}`;
+      document.getElementById('extra-savings-standard').innerText = `Standard Interest: $${Math.round(totalInterestStandard).toLocaleString()}`;
+      document.getElementById('extra-time-saved').innerText = `${yearsSaved} Years`;
+      document.getElementById('extra-time-details').innerText = `Payoff occurs in Year ${((payoffMonthExtra) / 12).toFixed(1)} instead of ${state.loanTerm}`;
+
+      // Limit month input for one-time extra payment
+      document.getElementById('input-onetime-month').setAttribute('max', totalMonths);
+    }
+
+    // --- SCENARIO COMPARISON PANEL ---
+    function saveScenario() {
+      const id = Date.now();
+      const downPaymentAmount = Math.round((state.homePrice * state.downPaymentPercent) / 100);
+      
+      // Calculate payment & metrics manually for current snapshot
+      const r = state.interestRate / 100 / 12;
+      const totalMonths = state.loanTerm * 12;
+      const loanAmount = state.homePrice - downPaymentAmount;
+      const monthlyPropertyTax = (state.homePrice * (state.propertyTaxRate / 100)) / 12;
+      const monthlyInsurance = state.homeInsurance / 12;
+      const initialPMI = state.downPaymentPercent < 20 ? (loanAmount * (state.pmiRate / 100)) / 12 : 0;
+      
+      let baseMonthlyPI = 0;
+      if (r === 0) {
+        baseMonthlyPI = loanAmount / totalMonths;
+      } else {
+        baseMonthlyPI = loanAmount * (r * Math.pow(1 + r, totalMonths)) / (Math.pow(1 + r, totalMonths) - 1);
+      }
+      const totalMonthlyPayment = baseMonthlyPI + monthlyPropertyTax + monthlyInsurance + Number(state.hoaFees) + initialPMI;
+
+      // Quick payoff calculation for scenarios
+      let balanceExtra = loanAmount;
+      let totalInterestExtra = 0;
+      let payoffMonthExtra = totalMonths;
+
+      for (let month = 1; month <= totalMonths; month++) {
+        if (balanceExtra > 0) {
+          const interestPaidExt = balanceExtra * r;
+          let basePrincipalPaidExt = baseMonthlyPI - interestPaidExt;
+
+          let currentExtra = Number(state.extraMonthly);
+          if (month % 12 === 0) currentExtra += Number(state.extraYearly);
+          if (month === Number(state.oneTimeMonth)) currentExtra += Number(state.extraOneTime);
+
+          let totalPrincipalPaidExt = basePrincipalPaidExt + currentExtra;
+          if (totalPrincipalPaidExt > balanceExtra) {
+            totalPrincipalPaidExt = balanceExtra;
+          }
+
+          balanceExtra = Math.max(0, balanceExtra - totalPrincipalPaidExt);
+          totalInterestExtra += interestPaidExt;
+        } else if (payoffMonthExtra === totalMonths) {
+          payoffMonthExtra = month - 1;
+        }
+      }
+
+      const scenario = {
+        id,
+        label: `Scenario ${state.comparisonScenarios.length + 1} (${state.loanTerm}yr @ ${state.interestRate}%)`,
+        homePrice: state.homePrice,
+        downPaymentPercent: state.downPaymentPercent,
+        downPaymentAmount: downPaymentAmount,
+        monthlyPayment: totalMonthlyPayment,
+        totalInterest: totalInterestExtra,
+        payoffYears: (payoffMonthExtra / 12).toFixed(1)
+      };
+
+      state.comparisonScenarios.push(scenario);
+      renderComparisonDashboard();
+    }
+
+    function removeScenario(id) {
+      state.comparisonScenarios = state.comparisonScenarios.filter(s => s.id !== id);
+      renderComparisonDashboard();
+    }
+
+    function renderComparisonDashboard() {
+      // Counters
+      const count = state.comparisonScenarios.length;
+      document.getElementById('compare-count').innerText = count;
+      document.getElementById('badge-compare-count').innerText = `${count} Saved`;
+
+      const placeholder = document.getElementById('compare-placeholder');
+      const grid = document.getElementById('compare-cards-grid');
+
+      if (count === 0) {
+        placeholder.classList.remove('hidden');
+        grid.classList.add('hidden');
+      } else {
+        placeholder.classList.add('hidden');
+        grid.classList.remove('hidden');
+
+        let gridHtml = '';
+        state.comparisonScenarios.forEach(scen => {
+          gridHtml += `
+            <div class="bg-slate-900 border border-slate-700/70 p-4 rounded-xl relative shadow flex flex-col justify-between">
+              <button
+                onclick="removeScenario(${scen.id})"
+                class="absolute top-3 right-3 text-slate-500 hover:text-red-400 transition-colors"
+                title="Remove Scenario"
+              >
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+
+              <div>
+                <h4 class="font-extrabold text-slate-200 text-sm tracking-tight mb-2 pr-6">
+                  ${scen.label}
+                </h4>
+                
+                <div class="grid grid-cols-2 gap-2 text-xs border-t border-slate-800/80 pt-2.5">
+                  <div>
+                    <span class="text-slate-500 block">Home Price:</span>
+                    <span class="font-semibold text-slate-300">$${scen.homePrice.toLocaleString()}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 block">Down Payment:</span>
+                    <span class="font-semibold text-slate-300">$${scen.downPaymentAmount.toLocaleString()} (${scen.downPaymentPercent}%)</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 block">Monthly Pay:</span>
+                    <span class="font-semibold text-emerald-400">$${Math.round(scen.monthlyPayment).toLocaleString()}</span>
+                  </div>
+                  <div>
+                    <span class="text-slate-500 block">Payoff Term:</span>
+                    <span class="font-semibold text-teal-400">${scen.payoffYears} Years</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="border-t border-slate-800/80 mt-3 pt-2.5 flex justify-between items-center">
+                <span class="text-[10px] text-slate-500 uppercase tracking-wide">Interest Accrued</span>
+                <span class="text-xs font-bold text-slate-300">$${Math.round(scen.totalInterest).toLocaleString()}</span>
+              </div>
+            </div>
+          `;
+        });
+        grid.innerHTML = gridHtml;
+      }
+    }
+
+    // --- INITIALIZATION ---
+    window.onload = function() {
+      calculateAndRender();
+    };
+  </script>
+</body>
+</html>
