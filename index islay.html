@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peat & Tide: Islay Whisky Companion</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Playfair Display for Serifs, Inter for Sans -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- Chart.js for beautiful radar charts in Tasting Journal -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome for Elegant Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            peat: {
+              50: '#f6f5f3',
+              100: '#e3dfd7',
+              200: '#c5beaf',
+              300: '#a39782',
+              400: '#837763',
+              500: '#6d614e',
+              600: '#554a3b',
+              700: '#433b30',
+              800: '#322c25',
+              900: '#231e1a',
+              950: '#120f0d',
+            },
+            amberAccent: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+            },
+            coastal: {
+              800: '#111e25',
+              900: '#0a1217',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar for rich dark aesthetic */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #120f0d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #433b30;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #f59e0b;
+    }
+    /* Ambient Glow Styles */
+    .glow-gold {
+      text-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+    }
+    .card-glass {
+      background: rgba(35, 30, 26, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(131, 119, 99, 0.2);
+    }
+    .card-glass-active {
+      background: rgba(35, 30, 26, 0.85);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-peat-950 text-peat-100 min-h-screen flex flex-col font-sans selection:bg-amberAccent-600 selection:text-white">
+
+  <!-- Header & Navigation -->
+  <header class="bg-peat-950/90 border-b border-peat-800/80 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <!-- Logo Brand -->
+      <a href="#" class="flex items-center space-x-3 group">
+        <div class="bg-gradient-to-br from-amberAccent-500 to-amberAccent-700 p-2.5 rounded-lg text-peat-950 shadow-lg group-hover:rotate-12 transition-transform duration-300">
+          <i class="fa-solid fa-glass-whiskey text-xl"></i>
+        </div>
+        <div>
+          <span class="font-serif text-xl sm:text-2xl tracking-wide font-bold text-white block glow-gold">PEAT &amp; TIDE</span>
+          <span class="text-[10px] text-amberAccent-500 uppercase tracking-[0.2em] font-semibold block">The Islay Malt Companion</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Tabs -->
+      <nav class="hidden md:flex bg-peat-900 border border-peat-800 p-1 rounded-xl">
+        <button onclick="switchTab('finder')" id="nav-finder" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 text-amberAccent-400 bg-peat-800">
+          <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Flavor Matcher
+        </button>
+        <button onclick="switchTab('distilleries')" id="nav-distilleries" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 text-peat-300 hover:text-white">
+          <i class="fa-solid fa-industry mr-1.5"></i> Distilleries
+        </button>
+        <button onclick="switchTab('journal')" id="nav-journal" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 text-peat-300 hover:text-white">
+          <i class="fa-solid fa-book-open mr-1.5"></i> Tasting Journal
+        </button>
+        <button onclick="switchTab('academy')" id="nav-academy" class="tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 text-peat-300 hover:text-white">
+          <i class="fa-solid fa-graduation-cap mr-1.5"></i> Academy
+        </button>
+      </nav>
+
+      <!-- User Stats Badge (Quick view of journal logs) -->
+      <div class="flex items-center space-x-3">
+        <div class="hidden sm:flex flex-col text-right">
+          <span class="text-[10px] text-peat-400 uppercase tracking-widest font-semibold">Tasted Dram Logs</span>
+          <span id="journal-badge-count" class="text-sm font-bold text-amberAccent-500">0 Dram Entries</span>
+        </div>
+        <!-- Mobile Menu Toggle Button -->
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-peat-200 hover:text-amberAccent-400 focus:outline-none transition-colors">
+          <i class="fa-solid fa-bars text-xl" id="menu-icon"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Navigation -->
+    <div id="mobile-drawer" class="hidden md:hidden bg-peat-900 border-b border-peat-800 py-3 px-4 flex flex-col space-y-2">
+      <button onclick="switchTab('finder'); toggleMobileMenu()" class="mobile-tab-btn flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg bg-peat-800 text-amberAccent-400">
+        <span><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Flavor Matcher</span>
+        <i class="fa-solid fa-chevron-right text-xs"></i>
+      </button>
+      <button onclick="switchTab('distilleries'); toggleMobileMenu()" class="mobile-tab-btn flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg text-peat-300 hover:bg-peat-800 hover:text-white">
+        <span><i class="fa-solid fa-industry mr-2"></i>Distilleries</span>
+        <i class="fa-solid fa-chevron-right text-xs"></i>
+      </button>
+      <button onclick="switchTab('journal'); toggleMobileMenu()" class="mobile-tab-btn flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg text-peat-300 hover:bg-peat-800 hover:text-white">
+        <span><i class="fa-solid fa-book-open mr-2"></i>Tasting Journal</span>
+        <i class="fa-solid fa-chevron-right text-xs"></i>
+      </button>
+      <button onclick="switchTab('academy'); toggleMobileMenu()" class="mobile-tab-btn flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg text-peat-300 hover:bg-peat-800 hover:text-white">
+        <span><i class="fa-solid fa-graduation-cap mr-2"></i>Academy</span>
+        <i class="fa-solid fa-chevron-right text-xs"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Atmosphere Cover Banner -->
+  <section class="relative bg-gradient-to-b from-coastal-800 to-peat-950 py-16 md:py-24 border-b border-peat-800/40 overflow-hidden">
+    <!-- Atmospheric Particle/Wave Accent lines -->
+    <div class="absolute inset-0 opacity-10 pointer-events-none">
+      <svg class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 0 100 Q 250 50 500 150 T 1000 80 T 1500 180" fill="none" stroke="#f59e0b" stroke-width="2" />
+        <path d="M 0 150 Q 300 200 600 100 T 1200 220 T 1800 120" fill="none" stroke="#00bcd4" stroke-width="1.5" />
+      </svg>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      <div class="inline-flex items-center space-x-2 bg-amberAccent-500/10 border border-amberAccent-500/30 px-3 py-1 rounded-full text-xs text-amberAccent-400 font-semibold uppercase tracking-wider mb-6">
+        <span>🥃 Experience the Queen of the Hebrides</span>
+      </div>
+      <h2 class="font-serif text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
+        Discover the Peat, Sea, &amp; Oak of <span class="italic text-amberAccent-400 glow-gold">Islay</span>
+      </h2>
+      <p class="max-w-2xl mx-auto text-peat-300 text-sm sm:text-base md:text-lg leading-relaxed">
+        From the medical floor malting bogs of the south coast monsters to the floral, marine, and unpeated expressions of the north, navigate the ultimate smoky Scotch paradise.
+      </p>
+    </div>
+  </section>
+
+  <!-- MAIN APP PORTAL -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8 w-full">
+
+    <!-- ================= TAB: FLAVOR MATCHING ENGINE ================= -->
+    <section id="content-finder" class="space-y-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Interactive Matcher Sliders Side-Panel -->
+        <div class="lg:col-span-5 card-glass p-6 sm:p-8 rounded-2xl shadow-2xl flex flex-col justify-between">
+          <div>
+            <div class="border-b border-peat-800 pb-4 mb-6">
+              <h3 class="font-serif text-2xl font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-amberAccent-500"></i> Flavor Alignment
+              </h3>
+              <p class="text-xs text-peat-400 mt-1">Dial in your sensory coordinates to discover your ideal Islay malt.</p>
+            </div>
+
+            <div class="space-y-6">
+              <!-- Slider: Peat/Earthiness -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-peat-200">PEAT LEVEL (PHENOLS)</span>
+                  <span id="slider-val-peat" class="font-mono text-amberAccent-400 font-semibold">5 / 10</span>
+                </div>
+                <input type="range" id="filter-peat" min="0" max="10" value="5" oninput="updateMatcher()" class="w-full h-2 bg-peat-800 rounded-lg appearance-none cursor-pointer accent-amberAccent-500">
+                <div class="flex justify-between text-[9px] text-peat-500">
+                  <span>None (Classic Laddie)</span>
+                  <span>Heavy (Octomore)</span>
+                </div>
+              </div>
+
+              <!-- Slider: Smoke / Ash -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-peat-200">SMOKE &amp; ASH INTENSITY</span>
+                  <span id="slider-val-smoke" class="font-mono text-amberAccent-400 font-semibold">5 / 10</span>
+                </div>
+                <input type="range" id="filter-smoke" min="0" max="10" value="5" oninput="updateMatcher()" class="w-full h-2 bg-peat-800 rounded-lg appearance-none cursor-pointer accent-amberAccent-500">
+                <div class="flex justify-between text-[9px] text-peat-500">
+                  <span>Soft Embers</span>
+                  <span>Campfire Fuel</span>
+                </div>
+              </div>
+
+              <!-- Slider: Marine / Brine / Seaweed -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-peat-200">COASTAL BRINE &amp; MEDICINE</span>
+                  <span id="slider-val-brine" class="font-mono text-amberAccent-400 font-semibold">5 / 10</span>
+                </div>
+                <input type="range" id="filter-brine" min="0" max="10" value="5" oninput="updateMatcher()" class="w-full h-2 bg-peat-800 rounded-lg appearance-none cursor-pointer accent-amberAccent-500">
+                <div class="flex justify-between text-[9px] text-peat-500">
+                  <span>Pure inland</span>
+                  <span>Seaweed &amp; Band-Aid</span>
+                </div>
+              </div>
+
+              <!-- Slider: Sweetness / Fruit -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-peat-200">FRUIT &amp; SWEETNESS</span>
+                  <span id="slider-val-sweet" class="font-mono text-amberAccent-400 font-semibold">5 / 10</span>
+                </div>
+                <input type="range" id="filter-sweet" min="0" max="10" value="5" oninput="updateMatcher()" class="w-full h-2 bg-peat-800 rounded-lg appearance-none cursor-pointer accent-amberAccent-500">
+                <div class="flex justify-between text-[9px] text-peat-500">
+                  <span>Bone Dry</span>
+                  <span>Sherry Fruit / Honey</span>
+                </div>
+              </div>
+
+              <!-- Slider: Oak / Spice -->
+              <div class="space-y-1">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-peat-200">OAK SPICE &amp; LEATHER</span>
+                  <span id="slider-val-spice" class="font-mono text-amberAccent-400 font-semibold">5 / 10</span>
+                </div>
+                <input type="range" id="filter-spice" min="0" max="10" value="5" oninput="updateMatcher()" class="w-full h-2 bg-peat-800 rounded-lg appearance-none cursor-pointer accent-amberAccent-500">
+                <div class="flex justify-between text-[9px] text-peat-500">
+                  <span>Fresh Spirit</span>
+                  <span>Rich Vanilla &amp; Clove</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 pt-6 border-t border-peat-800 flex items-center justify-between gap-4">
+            <button onclick="resetMatcher()" class="px-4 py-2 border border-peat-700 hover:border-peat-500 text-xs font-bold rounded-xl text-peat-300 hover:text-white transition-colors">
+              Reset Profile
+            </button>
+            <div class="text-[11px] text-peat-400 text-right">
+              Matching using <span class="text-amberAccent-500 font-semibold">Euclidean Profile Proximity</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Algorithmic Live Matching Results -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="font-serif text-2xl font-bold text-white tracking-wide">Top Distillery Alignment Matches</h3>
+              <p class="text-xs text-peat-400">Calculated continuously based on your tasting vectors.</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 bg-amberAccent-500/10 text-amberAccent-400 border border-amberAccent-500/20 font-bold rounded-lg uppercase tracking-wider">
+              Optimal Blends
+            </span>
+          </div>
+
+          <!-- Matching List Output Container -->
+          <div id="matching-results-list" class="space-y-4">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= TAB: DISTILLERY EXPLORER ================= -->
+    <section id="content-distilleries" class="space-y-8 hidden">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-peat-800 pb-6">
+        <div>
+          <h3 class="font-serif text-3xl font-bold text-white tracking-wide">Islay's Active Malt Distilleries</h3>
+          <p class="text-sm text-peat-400">Discover histories, average profiles, PPM peating, and tasting benchmarks.</p>
+        </div>
+        <div class="flex gap-2 w-full sm:w-auto">
+          <button onclick="filterDistilleryRegion('all')" id="dist-filter-all" class="dist-filter-btn px-4 py-1.5 text-xs font-bold bg-amberAccent-500 text-peat-950 rounded-lg">All</button>
+          <button onclick="filterDistilleryRegion('south')" id="dist-filter-south" class="dist-filter-btn px-4 py-1.5 text-xs font-bold bg-peat-800 text-peat-300 hover:text-white rounded-lg">Kildalton Coast</button>
+          <button onclick="filterDistilleryRegion('north')" id="dist-filter-north" class="dist-filter-btn px-4 py-1.5 text-xs font-bold bg-peat-800 text-peat-300 hover:text-white rounded-lg">North &amp; West</button>
+        </div>
+      </div>
+
+      <!-- Distillery grid list -->
+      <div id="distillery-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Dynamically populated from JS whisky library -->
+      </div>
+    </section>
+
+    <!-- ================= TAB: TASTING JOURNAL ================= -->
+    <section id="content-journal" class="space-y-8 hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Form to Add Dram Entry -->
+        <div class="lg:col-span-5 card-glass p-6 sm:p-8 rounded-2xl shadow-2xl flex flex-col gap-6">
+          <div class="border-b border-peat-800 pb-4">
+            <h3 class="font-serif text-2xl font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-feather-pointed text-amberAccent-500"></i> Record a Dram
+            </h3>
+            <p class="text-xs text-peat-400 mt-1">Log sensory characteristics to build your personal tasting radar profile.</p>
+          </div>
+
+          <form id="journal-form" onsubmit="saveJournalEntry(event)" class="space-y-4">
+            <!-- Row 1: Name and Distillery -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="block text-[11px] font-bold text-peat-300 uppercase tracking-wider">Whisky Name</label>
+                <input required type="text" id="j-name" placeholder="e.g. Quarter Cask" class="w-full bg-peat-900 border border-peat-800 rounded-lg px-3 py-2 text-sm text-white placeholder-peat-600 focus:outline-none focus:border-amberAccent-500">
+              </div>
+              <div class="space-y-1">
+                <label class="block text-[11px] font-bold text-peat-300 uppercase tracking-wider">Distillery</label>
+                <select id="j-distillery" class="w-full bg-peat-900 border border-peat-800 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amberAccent-500">
+                  <option value="Laphroaig">Laphroaig</option>
+                  <option value="Lagavulin">Lagavulin</option>
+                  <option value="Ardbeg">Ardbeg</option>
+                  <option value="Bowmore">Bowmore</option>
+                  <option value="Bruichladdich">Bruichladdich</option>
+                  <option value="Caol Ila">Caol Ila</option>
+                  <option value="Bunnahabhain">Bunnahabhain</option>
+                  <option value="Kilchoman">Kilchoman</option>
+                  <option value="Port Ellen">Port Ellen / Other</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Row 2: Age and Rating -->
+            <div class="grid grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="block text-[11px] font-bold text-peat-300 uppercase tracking-wider">ABV (%) or Statement</label>
+                <input type="text" id="j-age" placeholder="e.g. 48% / NAS" class="w-full bg-peat-900 border border-peat-800 rounded-lg px-3 py-2 text-sm text-white placeholder-peat-600 focus:outline-none focus:border-amberAccent-500">
+              </div>
+              <div class="space-y-1">
+                <label class="block text-[11px] font-bold text-peat-300 uppercase tracking-wider">My Rating (1-5)</label>
+                <select id="j-rating" class="w-full bg-peat-900 border border-peat-800 rounded-lg px-3 py-2 text-sm text-amberAccent-400 font-bold focus:outline-none focus:border-amberAccent-500">
+                  <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                  <option value="4">⭐⭐⭐⭐ Great</option>
+                  <option value="3">⭐⭐⭐ Balanced / Good</option>
+                  <option value="2">⭐⭐ Fair</option>
+                  <option value="1">⭐ Not For Me</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Sensory sliders to map onto radar profile chart -->
+            <div class="space-y-3 pt-2 border-t border-peat-800">
+              <span class="block text-[11px] font-bold text-amberAccent-400 uppercase tracking-wider">Flavor Footprints (0-100)</span>
+              
+              <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+                <div class="space-y-0.5">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-peat-300">Peatiness</span>
+                    <span id="j-val-peat" class="font-mono text-peat-400">50</span>
+                  </div>
+                  <input type="range" id="j-slider-peat" min="0" max="100" value="50" oninput="updateJournalLabels()" class="w-full h-1 bg-peat-800 accent-amberAccent-500">
+                </div>
+                <div class="space-y-0.5">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-peat-300">Smokiness</span>
+                    <span id="j-val-smoke" class="font-mono text-peat-400">50</span>
+                  </div>
+                  <input type="range" id="j-slider-smoke" min="0" max="100" value="50" oninput="updateJournalLabels()" class="w-full h-1 bg-peat-800 accent-amberAccent-500">
+                </div>
+                <div class="space-y-0.5">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-peat-300">Brine/Seaweed</span>
+                    <span id="j-val-brine" class="font-mono text-peat-400">50</span>
+                  </div>
+                  <input type="range" id="j-slider-brine" min="0" max="100" value="50" oninput="updateJournalLabels()" class="w-full h-1 bg-peat-800 accent-amberAccent-500">
+                </div>
+                <div class="space-y-0.5">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-peat-300">Sweetness</span>
+                    <span id="j-val-sweet" class="font-mono text-peat-400">50</span>
+                  </div>
+                  <input type="range" id="j-slider-sweet" min="0" max="100" value="50" oninput="updateJournalLabels()" class="w-full h-1 bg-peat-800 accent-amberAccent-500">
+                </div>
+                <div class="space-y-0.5">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-peat-300">Oak/Spice</span>
+                    <span id="j-val-spice" class="font-mono text-peat-400">50</span>
+                  </div>
+                  <input type="range" id="j-slider-spice" min="0" max="100" value="50" oninput="updateJournalLabels()" class="w-full h-1 bg-peat-800 accent-amberAccent-500">
+                </div>
+                <div class="space-y-0.5">
+                  <div class="flex justify-between text-[10px]">
+                    <span class="text-peat-300">Fruitiness</span>
+                    <span id="j-val-fruit" class="font-mono text-peat-400">50</span>
+                  </div>
+                  <input type="range" id="j-slider-fruit" min="0" max="100" value="50" oninput="updateJournalLabels()" class="w-full h-1 bg-peat-800 accent-amberAccent-500">
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Tasting Notes -->
+            <div class="space-y-1">
+              <label class="block text-[11px] font-bold text-peat-300 uppercase tracking-wider">Tasting Notes</label>
+              <textarea id="j-notes" rows="2" placeholder="Describe the nose, palate, finish, or water drop expansion..." class="w-full bg-peat-900 border border-peat-800 rounded-lg px-3 py-2 text-xs text-white placeholder-peat-600 focus:outline-none focus:border-amberAccent-500"></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-amberAccent-500 hover:bg-amberAccent-400 text-peat-950 font-bold py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center gap-2">
+              <i class="fa-solid fa-bookmark"></i> Save Tasting Log Entry
+            </button>
+          </form>
+        </div>
+
+        <!-- Saved Tasting Journal Feed and Interactive Chart visualization -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+          
+          <!-- Selected Dram Profile Area (Displays Chart.js Radar representation of currently selected journal item) -->
+          <div class="card-glass p-6 rounded-2xl border border-peat-800 relative flex flex-col md:flex-row gap-6 items-center">
+            <div class="w-full md:w-1/2">
+              <h4 class="font-serif text-lg font-bold text-white mb-1" id="current-chart-title">Sensory Compass</h4>
+              <p class="text-xs text-peat-400 mb-4">Click any logged dram from your cellar below to visualize and overlay its flavor compass.</p>
+              
+              <div class="space-y-2 text-xs">
+                <div class="flex justify-between"><span class="text-peat-400">Expression:</span> <span class="font-semibold text-white" id="info-express">N/A</span></div>
+                <div class="flex justify-between"><span class="text-peat-400">Distillery:</span> <span class="font-semibold text-white" id="info-distill">N/A</span></div>
+                <div class="flex justify-between"><span class="text-peat-400">Strength/Age:</span> <span class="font-semibold text-white" id="info-age">N/A</span></div>
+                <div class="flex justify-between"><span class="text-peat-400">Rating:</span> <span class="text-amberAccent-400" id="info-stars">N/A</span></div>
+                <div class="pt-2 border-t border-peat-800"><p id="info-notes" class="italic text-peat-300 leading-relaxed text-xs">No notes provided yet.</p></div>
+              </div>
+            </div>
+            
+            <div class="w-full md:w-1/2 h-64 flex justify-center items-center relative">
+              <canvas id="journalChart" class="max-w-full max-h-full"></canvas>
+            </div>
+          </div>
+
+          <!-- History Logs Grid Feed -->
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="font-serif text-xl font-bold text-white tracking-wide">My Saved Cellar logs</h4>
+              <div class="flex gap-2">
+                <button onclick="exportJournal()" class="text-xs px-2.5 py-1.5 border border-peat-800 hover:border-peat-600 rounded-lg hover:text-white transition-colors" title="Download Cellar Log as JSON">
+                  <i class="fa-solid fa-file-export mr-1"></i> Export Cellar
+                </button>
+                <button onclick="clearJournal()" class="text-xs px-2.5 py-1.5 border border-red-900/40 text-red-400 hover:bg-red-900/10 rounded-lg transition-colors" title="Reset Cellar Journal">
+                  <i class="fa-solid fa-trash mr-1"></i> Clear Cellar
+                </button>
+              </div>
+            </div>
+
+            <!-- Empty State placeholder -->
+            <div id="journal-empty" class="card-glass border-dashed border-peat-800/80 p-8 rounded-2xl text-center flex flex-col items-center gap-3">
+              <div class="w-12 h-12 bg-peat-800 rounded-full flex items-center justify-center text-peat-500">
+                <i class="fa-solid fa-hourglass-empty text-xl"></i>
+              </div>
+              <div>
+                <h5 class="text-sm font-semibold text-peat-200">No dram logs recorded yet</h5>
+                <p class="text-xs text-peat-500 max-w-sm mt-1 mx-auto">Fill in the tasting form on the left to start charting your cellar journey through Islay!</p>
+              </div>
+            </div>
+
+            <!-- Cellar grid entries output -->
+            <div id="journal-list-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <!-- Dynamically populated card cellars -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= TAB: DRAM ACADEMY ================= -->
+    <section id="content-academy" class="space-y-8 hidden">
+      <div class="border-b border-peat-800 pb-4">
+        <h3 class="font-serif text-3xl font-bold text-white tracking-wide">The Dram Academy</h3>
+        <p class="text-sm text-peat-400">Master the geological, historical, and biological elements that carve the character of Islay single malts.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Chapter 1: Peat Anatomy -->
+        <div class="card-glass p-6 rounded-2xl flex flex-col gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🌱</span>
+            <div>
+              <h4 class="font-serif text-lg font-bold text-white">Geology &amp; Anatomy of Peat</h4>
+              <span class="text-[10px] text-amberAccent-500 uppercase tracking-widest font-bold">The Soil's Memory</span>
+            </div>
+          </div>
+          <p class="text-xs leading-relaxed text-peat-300">
+            Peat is a dense accumulation of partially decayed organic vegetation—sphagnum moss, heather, and sea sedge—trapped in Islay’s oxygen-starved waterlogged bogs. Growing at a glacial rate of just <strong class="text-white">1 millimeter per year</strong>, a 3-meter deep peat bog represents over 3,000 years of coastal Scottish history.
+          </p>
+          <div class="bg-peat-900/60 p-3 rounded-xl border border-peat-800 text-[11px] text-peat-400 leading-normal">
+            <strong>Sensory Fact:</strong> Distilleries like Ardbeg and Laphroaig measure peated levels in <strong class="text-amberAccent-400">PPM (Phenol Parts Per Million)</strong> in the kiln smoke. This transfers guaiacol, syringol, and cresol compounds onto the barley, manifesting as medicinal, iodine, smoke, and tar-like aromas.
+          </div>
+        </div>
+
+        <!-- Chapter 2: Kilning and Malting -->
+        <div class="card-glass p-6 rounded-2xl flex flex-col gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🔥</span>
+            <div>
+              <h4 class="font-serif text-lg font-bold text-white">Floor Maltings &amp; Kilning</h4>
+              <span class="text-[10px] text-amberAccent-500 uppercase tracking-widest font-bold">The Smoke Imprint</span>
+            </div>
+          </div>
+          <p class="text-xs leading-relaxed text-peat-300">
+            To ferment barley, it must first be steeped in local Islay peat-dyed copper waters to initiate germination. Once sprouted, this "green malt" is spread across classical stone floor maltings (still proudly maintained by Bowmore, Laphroaig, and Kilchoman) before being dried inside pagoda-topped kilns fueled by slow-burning Islay damp peat.
+          </p>
+          <div class="bg-peat-900/60 p-3 rounded-xl border border-peat-800 text-[11px] text-peat-400 leading-normal">
+            <strong>Sensory Fact:</strong> The damp peat creates dense white smoke loaded with organic phenol chemicals. If kilned early in the drying cycle when the moisture content of the grains is high, the smoke binds tightly to the outer husks of the barley.
+          </div>
+        </div>
+
+        <!-- Chapter 3: Pot Stills and Reflux -->
+        <div class="card-glass p-6 rounded-2xl flex flex-col gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">⚗️</span>
+            <div>
+              <h4 class="font-serif text-lg font-bold text-white">Copper Reflux &amp; Pure Spirit</h4>
+              <span class="text-[10px] text-amberAccent-500 uppercase tracking-widest font-bold">Shaping the Liquid</span>
+            </div>
+          </div>
+          <p class="text-xs leading-relaxed text-peat-300">
+            The geometry of copper pot stills defines the body of the spirit. Distilleries with short, fat stills (like Lagavulin) restrict reflux, forcing heavy oily compounds, tar, and rich phenols directly into the condenser. Distilleries with tall necks or purifying chambers encourage lighter, floral, citrus elements.
+          </p>
+          <div class="bg-peat-900/60 p-3 rounded-xl border border-peat-800 text-[11px] text-peat-400 leading-normal">
+            <strong>Sensory Fact:</strong> Bruichladdich’s unpeated malts rely on extremely slow, gentle distillations in high neck copper setups to keep the coastal spirit bright, floral, and bursting with maritime maritime yeast esters.
+          </div>
+        </div>
+
+        <!-- Chapter 4: Wood & Cask Maturation -->
+        <div class="card-glass p-6 rounded-2xl flex flex-col gap-4">
+          <div class="flex items-center gap-3">
+            <span class="text-3xl">🪵</span>
+            <div>
+              <h4 class="font-serif text-lg font-bold text-white">Atlantic Vaults &amp; Wood Aging</h4>
+              <span class="text-[10px] text-amberAccent-500 uppercase tracking-widest font-bold">The Shoreline Maturation</span>
+            </div>
+          </div>
+          <p class="text-xs leading-relaxed text-peat-300">
+            Over 70% of a malt’s ultimate flavor profiles originates from the cask. Islay distilleries utilize second-use charred White American Oak ex-bourbon casks (offering vanilla and wood sugars) or dark Spanish Oak ex-Sherry butts (yielding deep red amber, dates, rich chocolate, and spices).
+          </p>
+          <div class="bg-peat-900/60 p-3 rounded-xl border border-peat-800 text-[11px] text-peat-400 leading-normal">
+            <strong>Sensory Fact:</strong> Storied shore-side warehouses (like Bowmore’s legendary No.1 Vaults below sea level) subject the wood pores to perpetual atmospheric pressure shifts. Damp sea air and salt residue seep inside, resulting in a distinct oceanic saline kick.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Foot-note Warning and Copyright Information -->
+  <footer class="bg-peat-950 border-t border-peat-800 mt-16 py-12 text-center">
+    <div class="max-w-7xl mx-auto px-4 text-peat-500 text-xs space-y-4">
+      <div class="flex justify-center space-x-6 text-xl text-peat-400">
+        <a href="#" class="hover:text-amberAccent-400 transition-colors"><i class="fa-brands fa-square-instagram"></i></a>
+        <a href="#" class="hover:text-amberAccent-400 transition-colors"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" class="hover:text-amberAccent-400 transition-colors"><i class="fa-brands fa-twitter"></i></a>
+      </div>
+      <p class="font-serif italic text-peat-400 text-sm">"Slàinte mhath" - Good health to you in Scottish Gaelic.</p>
+      <p class="max-w-2xl mx-auto leading-relaxed text-[10px] text-peat-500">
+        This app is built for whisky enthusiasts, connoisseurs, and culinary scholars. Drink responsibly. Peat &amp; Tide does not endorse under-age consumption or hazardous health practices. All tasting estimations are algorithmic.
+      </p>
+      <p class="text-[10px] text-peat-600">© 2026 Peat &amp; Tide Studio. Handcrafted in the spirit of Loch Indaal.</p>
+    </div>
+  </footer>
+
+  <!-- ================= JAVASCRIPT LOGIC WORKFLOW ================= -->
+  <script>
+    // --- DISTILLERY LIBRARY DATA DATABASE ---
+    const distilleries = [
+      {
+        id: 'laphroaig',
+        name: 'Laphroaig',
+        founded: 1815,
+        region: 'south',
+        ppm: '45-55 PPM',
+        profileDesc: 'Extremely smoky, intensely phenolic, medical, and sweet. Renowned for its bold iodine, tar, bandages, and sweet seaweed character.',
+        character: { peat: 10, smoke: 9, brine: 10, sweet: 3, spice: 5, fruit: 3 },
+        classicBottle: 'Laphroaig 10 Year Old / Quarter Cask',
+        waterSource: 'Kilbride Stream (highly peaty acid water)',
+        avatar: '🥃',
+        accentColor: '#10b981'
+      },
+      {
+        id: 'lagavulin',
+        name: 'Lagavulin',
+        founded: 1816,
+        region: 'south',
+        ppm: '35-40 PPM',
+        profileDesc: 'Rich, elegant, dry smoke, and majestic. Heavy sherry cask impact with sweet dried fruits, dark wood, rich caramel, and peaty seawater balance.',
+        character: { peat: 8, smoke: 9, brine: 6, sweet: 7, spice: 8, fruit: 6 },
+        classicBottle: 'Lagavulin 16 Year Old',
+        waterSource: 'Solan Lochs (hilly peat streams)',
+        avatar: '🌋',
+        accentColor: '#d97706'
+      },
+      {
+        id: 'ardbeg',
+        name: 'Ardbeg',
+        founded: 1815,
+        region: 'south',
+        ppm: '50-55 PPM',
+        profileDesc: 'Complex, heavily peated, but deeply balanced by vibrant citrus, sweet lime, pine needles, espresso beans, black pepper, and medicinal salt.',
+        character: { peat: 10, smoke: 10, brine: 8, sweet: 5, spice: 6, fruit: 5 },
+        classicBottle: 'Ardbeg Ten / An Oa',
+        waterSource: 'Loch Uigeadail',
+        avatar: '🧬',
+        accentColor: '#4f46e5'
+      },
+      {
+        id: 'bowmore',
+        name: 'Bowmore',
+        founded: 1779,
+        region: 'north',
+        ppm: '20-25 PPM',
+        profileDesc: 'Medium peating with rich, dark chocolate, ripe stone fruits, and salt. Balanced shore-side warehouse characteristics with classic sea-spray.',
+        character: { peat: 5, smoke: 5, brine: 6, sweet: 7, spice: 6, fruit: 7 },
+        classicBottle: 'Bowmore 12 / 15 Year Old',
+        waterSource: 'Laggan River',
+        avatar: '⚓',
+        accentColor: '#ec4899'
+      },
+      {
+        id: 'caolila',
+        name: 'Caol Ila',
+        founded: 1846,
+        region: 'north',
+        ppm: '30-35 PPM',
+        profileDesc: 'Crisp, oily, clean coastal campfire smoke, and fresh grass. Light gold appearance with notes of sea-air, smoked ham, lemons, and olive oil.',
+        character: { peat: 6, smoke: 7, brine: 8, sweet: 4, spice: 4, fruit: 5 },
+        classicBottle: 'Caol Ila 12 Year Old',
+        waterSource: 'Loch Nam Ban (limestone filtered, clean)',
+        avatar: '🌊',
+        accentColor: '#06b6d4'
+      },
+      {
+        id: 'bruichladdich',
+        name: 'Bruichladdich (The Laddie)',
+        founded: 1881,
+        region: 'north',
+        ppm: '0 PPM (Unpeated Classic)',
+        profileDesc: 'Lively, pure floral, marine yeast, and barley sugars. Totally unpeated expression showcasing vanilla oak, orchard fruits, and crisp ocean spray.',
+        character: { peat: 0, smoke: 1, brine: 5, sweet: 8, spice: 5, fruit: 8 },
+        classicBottle: 'The Classic Laddie',
+        waterSource: 'An Torran Springs',
+        avatar: '🌾',
+        accentColor: '#3b82f6'
+      },
+      {
+        id: 'octomore',
+        name: 'Octomore (Bruichladdich)',
+        founded: 2008,
+        region: 'north',
+        ppm: '80-200+ PPM (Super Peated)',
+        profileDesc: 'The peated record-holder. Blistering levels of raw, oily woodsmoke, tar, burnt earth, and vanilla. Surprisingly sweet and elegant underneath.',
+        character: { peat: 10, smoke: 10, brine: 7, sweet: 4, spice: 7, fruit: 4 },
+        classicBottle: 'Octomore (e.g. 14.1 / 15.1)',
+        waterSource: 'An Torran Springs',
+        avatar: '🚀',
+        accentColor: '#3f3f46'
+      },
+      {
+        id: 'bunnahabhain',
+        name: 'Bunnahabhain',
+        founded: 1881,
+        region: 'north',
+        ppm: '1-2 PPM (Sherried)',
+        profileDesc: 'Unpeated, rich, oily, and sherried. Incredible depth of roasted nuts, sea salt, rich dark fruit cake, dried raisins, honey, and dense leather.',
+        character: { peat: 1, smoke: 2, brine: 4, sweet: 9, spice: 8, fruit: 9 },
+        classicBottle: 'Bunnahabhain 12 Year Old',
+        waterSource: 'Margadale Spring (piped directly to avoid peat soil contact)',
+        avatar: '🌰',
+        accentColor: '#8b5cf6'
+      },
+      {
+        id: 'kilchoman',
+        name: 'Kilchoman',
+        founded: 2005,
+        region: 'north',
+        ppm: '20-25 PPM',
+        profileDesc: 'Islay Farmhouse style. Fresh, citric, light golden barley notes coupled with clean camp-smoke peat, orchard fruit, pears, and dry oak finish.',
+        character: { peat: 7, smoke: 8, brine: 5, sweet: 6, spice: 5, fruit: 7 },
+        classicBottle: 'Kilchoman Machir Bay / Sanaig',
+        waterSource: 'Cnoc Dubh',
+        avatar: '🚜',
+        accentColor: '#eab308'
+      }
+    ];
+
+    // --- APPLICATION VARIABLES ---
+    let cellarLogs = [];
+    let radarChartObj = null;
+
+    // --- MOBILE DRAWER NAVIGATION MANAGER ---
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobile-drawer');
+      const icon = document.getElementById('menu-icon');
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        icon.className = "fa-solid fa-xmark text-xl";
+      } else {
+        drawer.classList.add('hidden');
+        icon.className = "fa-solid fa-bars text-xl";
+      }
+    }
+
+    // --- TAB CONTROLLER SWITCHER ---
+    function switchTab(tabId) {
+      // Set active nav styling
+      const tabs = ['finder', 'distilleries', 'journal', 'academy'];
+      
+      // Update Desktop classes
+      tabs.forEach(t => {
+        const btn = document.getElementById(`nav-${t}`);
+        if (t === tabId) {
+          btn.className = "tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 text-amberAccent-400 bg-peat-800";
+        } else {
+          btn.className = "tab-btn px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-200 text-peat-300 hover:text-white";
+        }
+      });
+
+      // Update Mobile Drawer classes
+      tabs.forEach(t => {
+        const els = document.querySelectorAll('.mobile-tab-btn');
+        els.forEach(el => {
+          if (el.textContent.toLowerCase().includes(t)) {
+            el.className = "mobile-tab-btn flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg bg-peat-800 text-amberAccent-400";
+          } else {
+            el.className = "mobile-tab-btn flex items-center justify-between px-3 py-2 text-sm font-semibold rounded-lg text-peat-300 hover:bg-peat-800 hover:text-white";
+          }
+        });
+      });
+
+      // Show/Hide section contents
+      tabs.forEach(t => {
+        const el = document.getElementById(`content-${t}`);
+        if (t === tabId) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+
+      // Trigger redraws / content refreshes
+      if (tabId === 'finder') {
+        updateMatcher();
+      } else if (tabId === 'distilleries') {
+        renderDistilleryGrid('all');
+      } else if (tabId === 'journal') {
+        renderJournalLogs();
+      }
+    }
+
+    // ================= DISTILLERY LOGIC & FILTERS =================
+    function renderDistilleryGrid(filterRegion = 'all') {
+      const grid = document.getElementById('distillery-grid');
+      let html = '';
+
+      const filteredList = distilleries.filter(d => filterRegion === 'all' || d.region === filterRegion);
+
+      filteredList.forEach(d => {
+        html += `
+          <div class="card-glass hover:card-glass-active p-6 rounded-2xl flex flex-col justify-between transition-all duration-300 transform hover:-translate-y-1 shadow-md">
+            <div>
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex items-center space-x-3">
+                  <div class="text-3xl p-2.5 bg-peat-900 rounded-xl border border-peat-800 flex items-center justify-center">${d.avatar}</div>
+                  <div>
+                    <h4 class="font-serif text-xl font-bold text-white">${d.name}</h4>
+                    <span class="text-[10px] text-peat-400 font-semibold tracking-wider uppercase">${d.region === 'south' ? 'South Kildalton Coast' : 'North & West Coast'}</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span class="text-xs text-amberAccent-400 block font-bold">${d.ppm}</span>
+                  <span class="text-[9px] text-peat-500 font-mono">Est. ${d.founded}</span>
+                </div>
+              </div>
+              
+              <p class="text-xs leading-relaxed text-peat-300 mb-4">${d.profileDesc}</p>
+              
+              <div class="grid grid-cols-2 gap-2 text-[11px] bg-peat-950/60 p-3 rounded-xl border border-peat-800/80 mb-4">
+                <div>
+                  <span class="text-peat-500 block text-[9px] uppercase font-bold">Water Source</span>
+                  <span class="font-medium text-peat-300 truncate block" title="${d.waterSource}">${d.waterSource}</span>
+                </div>
+                <div>
+                  <span class="text-peat-500 block text-[9px] uppercase font-bold">Classic Malt benchmark</span>
+                  <span class="font-medium text-amberAccent-400 truncate block" title="${d.classicBottle}">${d.classicBottle}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Taste Vector Indicator Bars -->
+            <div class="space-y-2 pt-2 border-t border-peat-800/60">
+              <span class="block text-[9px] font-bold text-peat-400 uppercase tracking-widest">Tasting Profile</span>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5 text-[10px]">
+                <div>
+                  <div class="flex justify-between text-peat-400"><span>Peat</span> <span class="font-mono">${d.character.peat}</span></div>
+                  <div class="w-full h-1 bg-peat-800 rounded-full overflow-hidden"><div class="h-full bg-amber-500" style="width: ${d.character.peat * 10}%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-peat-400"><span>Smoke</span> <span class="font-mono">${d.character.smoke}</span></div>
+                  <div class="w-full h-1 bg-peat-800 rounded-full overflow-hidden"><div class="h-full bg-amber-500" style="width: ${d.character.smoke * 10}%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-peat-400"><span>Salty Sea</span> <span class="font-mono">${d.character.brine}</span></div>
+                  <div class="w-full h-1 bg-peat-800 rounded-full overflow-hidden"><div class="h-full bg-cyan-500" style="width: ${d.character.brine * 10}%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-peat-400"><span>Sweetness</span> <span class="font-mono">${d.character.sweet}</span></div>
+                  <div class="w-full h-1 bg-peat-800 rounded-full overflow-hidden"><div class="h-full bg-pink-500" style="width: ${d.character.sweet * 10}%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-peat-400"><span>Oak Spice</span> <span class="font-mono">${d.character.spice}</span></div>
+                  <div class="w-full h-1 bg-peat-800 rounded-full overflow-hidden"><div class="h-full bg-orange-500" style="width: ${d.character.spice * 10}%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-peat-400"><span>Fruit</span> <span class="font-mono">${d.character.fruit}</span></div>
+                  <div class="w-full h-1 bg-peat-800 rounded-full overflow-hidden"><div class="h-full bg-red-500" style="width: ${d.character.fruit * 10}%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      grid.innerHTML = html;
+    }
+
+    function filterDistilleryRegion(region) {
+      // Toggle button active styling
+      const btns = ['all', 'south', 'north'];
+      btns.forEach(b => {
+        const el = document.getElementById(`dist-filter-${b}`);
+        if (b === region) {
+          el.className = "dist-filter-btn px-4 py-1.5 text-xs font-bold bg-amberAccent-500 text-peat-950 rounded-lg";
+        } else {
+          el.className = "dist-filter-btn px-4 py-1.5 text-xs font-bold bg-peat-800 text-peat-300 hover:text-white rounded-lg";
+        }
+      });
+      renderDistilleryGrid(region);
+    }
+
+    // ================= ALGORITHMIC MATCHING FLAVOR FINDER =================
+    function updateMatcher() {
+      // Get slider coordinates
+      const targetPeat = parseFloat(document.getElementById('filter-peat').value);
+      const targetSmoke = parseFloat(document.getElementById('filter-smoke').value);
+      const targetBrine = parseFloat(document.getElementById('filter-brine').value);
+      const targetSweet = parseFloat(document.getElementById('filter-sweet').value);
+      const targetSpice = parseFloat(document.getElementById('filter-spice').value);
+
+      // Render indicator values
+      document.getElementById('slider-val-peat').innerText = `${targetPeat} / 10`;
+      document.getElementById('slider-val-smoke').innerText = `${targetSmoke} / 10`;
+      document.getElementById('slider-val-brine').innerText = `${targetBrine} / 10`;
+      document.getElementById('slider-val-sweet').innerText = `${targetSweet} / 10`;
+      document.getElementById('slider-val-spice').innerText = `${targetSpice} / 10`;
+
+      // Map to compute Euclidean distance to each distillery vector
+      const scoredDistilleries = distilleries.map(d => {
+        const dPeat = d.character.peat;
+        const dSmoke = d.character.smoke;
+        const dBrine = d.character.brine;
+        const dSweet = d.character.sweet;
+        const dSpice = d.character.spice;
+
+        // Euclidean Distance
+        const sumSquare = 
+          Math.pow(targetPeat - dPeat, 2) + 
+          Math.pow(targetSmoke - dSmoke, 2) + 
+          Math.pow(targetBrine - dBrine, 2) + 
+          Math.pow(targetSweet - dSweet, 2) + 
+          Math.pow(targetSpice - dSpice, 2);
+        
+        const distance = Math.sqrt(sumSquare);
+        // Normalize proximity: max possible distance is sqrt(10^2 * 5) = sqrt(500) = 22.36
+        const maxDist = 22.36;
+        const scorePercentage = Math.max(0, Math.round(((maxDist - distance) / maxDist) * 100));
+
+        return { ...d, matchScore: scorePercentage };
+      });
+
+      // Sort with highest match score first
+      scoredDistilleries.sort((a, b) => b.matchScore - a.matchScore);
+
+      // Render Results
+      const listContainer = document.getElementById('matching-results-list');
+      let html = '';
+
+      scoredDistilleries.forEach((d, idx) => {
+        const rankColor = idx === 0 ? 'border-amberAccent-500 bg-amberAccent-500/5' : 'border-peat-800';
+        
+        html += `
+          <div class="card-glass border ${rankColor} p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-300">
+            <div class="flex items-center space-x-4">
+              <span class="text-4xl p-2 bg-peat-900 rounded-xl border border-peat-800/80">${d.avatar}</span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h4 class="font-serif text-lg font-bold text-white">${d.name}</h4>
+                  ${idx === 0 ? '<span class="text-[9px] bg-amberAccent-500 text-peat-950 px-2 py-0.5 rounded font-bold uppercase tracking-wide">Optimal Choice</span>' : ''}
+                </div>
+                <p class="text-xs text-peat-400 max-w-md mt-1 leading-normal line-clamp-2">${d.profileDesc}</p>
+                <div class="flex gap-4 text-[10px] text-peat-500 mt-2">
+                  <span><strong>Benchmark:</strong> ${d.classicBottle}</span>
+                  <span>•</span>
+                  <span><strong>Water:</strong> ${d.waterSource}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Score Circular Arc Indicator -->
+            <div class="flex items-center space-x-4 self-end md:self-auto">
+              <div class="text-right">
+                <span class="text-xs text-peat-400 block font-semibold">Match score</span>
+                <span class="text-2xl font-black text-amberAccent-400 font-mono">${d.matchScore}%</span>
+              </div>
+              <div class="relative w-12 h-12">
+                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                  <path class="text-peat-800" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="text-amberAccent-500" stroke-dasharray="${d.matchScore}, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center text-[10px] font-black text-white font-mono">
+                  #${idx + 1}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      listContainer.innerHTML = html;
+    }
+
+    function resetMatcher() {
+      document.getElementById('filter-peat').value = 5;
+      document.getElementById('filter-smoke').value = 5;
+      document.getElementById('filter-brine').value = 5;
+      document.getElementById('filter-sweet').value = 5;
+      document.getElementById('filter-spice').value = 5;
+      updateMatcher();
+    }
+
+
+    // ================= PERSONAL TASTING CELLAR JOURNAL SYSTEM =================
+    function updateJournalLabels() {
+      document.getElementById('j-val-peat').innerText = document.getElementById('j-slider-peat').value;
+      document.getElementById('j-val-smoke').innerText = document.getElementById('j-slider-smoke').value;
+      document.getElementById('j-val-brine').innerText = document.getElementById('j-slider-brine').value;
+      document.getElementById('j-val-sweet').innerText = document.getElementById('j-slider-sweet').value;
+      document.getElementById('j-val-spice').innerText = document.getElementById('j-slider-spice').value;
+      document.getElementById('j-val-fruit').innerText = document.getElementById('j-slider-fruit').value;
+    }
+
+    function saveJournalEntry(e) {
+      e.preventDefault();
+
+      const newEntry = {
+        id: Date.now(),
+        name: document.getElementById('j-name').value,
+        distillery: document.getElementById('j-distillery').value,
+        age: document.getElementById('j-age').value || 'NAS',
+        rating: parseInt(document.getElementById('j-rating').value),
+        notes: document.getElementById('j-notes').value || 'No notes provided.',
+        flavor: {
+          peat: parseInt(document.getElementById('j-slider-peat').value),
+          smoke: parseInt(document.getElementById('j-slider-smoke').value),
+          brine: parseInt(document.getElementById('j-slider-brine').value),
+          sweet: parseInt(document.getElementById('j-slider-sweet').value),
+          spice: parseInt(document.getElementById('j-slider-spice').value),
+          fruit: parseInt(document.getElementById('j-slider-fruit').value)
+        }
+      };
+
+      cellarLogs.unshift(newEntry);
+      localStorage.setItem('peat_tide_cellar', JSON.stringify(cellarLogs));
+      
+      // Reset input form
+      document.getElementById('journal-form').reset();
+      updateJournalLabels();
+      
+      // Re-render
+      renderJournalLogs();
+      selectJournalDram(newEntry.id);
+    }
+
+    function deleteJournalEntry(id, e) {
+      e.stopPropagation(); // prevent selecting the card
+      cellarLogs = cellarLogs.filter(item => item.id !== id);
+      localStorage.setItem('peat_tide_cellar', JSON.stringify(cellarLogs));
+      renderJournalLogs();
+      
+      if (cellarLogs.length > 0) {
+        selectJournalDram(cellarLogs[0].id);
+      } else {
+        resetCompassChart();
+      }
+    }
+
+    function selectJournalDram(id) {
+      const item = cellarLogs.find(i => i.id === id);
+      if (!item) return;
+
+      // Update Info Cards
+      document.getElementById('current-chart-title').innerText = item.name;
+      document.getElementById('info-express').innerText = item.name;
+      document.getElementById('info-distill').innerText = item.distillery;
+      document.getElementById('info-age').innerText = item.age;
+      document.getElementById('info-stars').innerText = "⭐".repeat(item.rating);
+      document.getElementById('info-notes').innerText = `"${item.notes}"`;
+
+      // Update Card styling highlight classes
+      const allCards = document.querySelectorAll('.cellar-card');
+      allCards.forEach(card => {
+        const cardId = parseInt(card.getAttribute('data-id'));
+        if (cardId === id) {
+          card.classList.add('border-amberAccent-500', 'bg-amberAccent-500/5');
+          card.classList.remove('border-peat-800');
+        } else {
+          card.classList.remove('border-amberAccent-500', 'bg-amberAccent-500/5');
+          card.classList.add('border-peat-800');
+        }
+      });
+
+      // Update Chart Canvas
+      updateCompassChart(item.flavor, item.name);
+    }
+
+    function initCompassChart() {
+      const ctx = document.getElementById('journalChart').getContext('2d');
+      
+      radarChartObj = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Peatiness', 'Smokiness', 'Brine/Salty', 'Sweetness', 'Wood Spice', 'Fruitiness'],
+          datasets: [{
+            label: 'Sense Alignment',
+            data: [0, 0, 0, 0, 0, 0],
+            backgroundColor: 'rgba(245, 158, 11, 0.25)',
+            borderColor: '#f59e0b',
+            borderWidth: 2,
+            pointBackgroundColor: '#fbbf24',
+            pointBorderColor: '#120f0d',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#f59e0b'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(131, 119, 99, 0.2)' },
+              grid: { color: 'rgba(131, 119, 99, 0.2)' },
+              pointLabels: {
+                color: '#c5beaf',
+                font: { size: 10, family: 'Inter' }
+              },
+              ticks: {
+                display: false,
+                stepSize: 20
+              },
+              min: 0,
+              max: 100
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    function updateCompassChart(flavors, labelName) {
+      if (!radarChartObj) return;
+      
+      radarChartObj.data.datasets[0].data = [
+        flavors.peat,
+        flavors.smoke,
+        flavors.brine,
+        flavors.sweet,
+        flavors.spice,
+        flavors.fruit
+      ];
+      radarChartObj.data.datasets[0].label = labelName;
+      radarChartObj.update();
+    }
+
+    function resetCompassChart() {
+      updateCompassChart({ peat: 0, smoke: 0, brine: 0, sweet: 0, spice: 0, fruit: 0 }, 'Empty');
+      document.getElementById('current-chart-title').innerText = "Sensory Compass";
+      document.getElementById('info-express').innerText = "N/A";
+      document.getElementById('info-distill').innerText = "N/A";
+      document.getElementById('info-age').innerText = "N/A";
+      document.getElementById('info-stars').innerText = "N/A";
+      document.getElementById('info-notes').innerText = "No tasting logs selected.";
+    }
+
+    function renderJournalLogs() {
+      const emptyState = document.getElementById('journal-empty');
+      const listContainer = document.getElementById('journal-list-grid');
+      const badgeCount = document.getElementById('journal-badge-count');
+
+      badgeCount.innerText = `${cellarLogs.length} logged drams`;
+
+      if (cellarLogs.length === 0) {
+        emptyState.classList.remove('hidden');
+        listContainer.classList.add('hidden');
+        resetCompassChart();
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      listContainer.classList.remove('hidden');
+
+      let html = '';
+      cellarLogs.forEach(item => {
+        html += `
+          <div onclick="selectJournalDram(${item.id})" data-id="${item.id}" class="cellar-card card-glass hover:bg-peat-900/40 border border-peat-800 p-4 rounded-xl cursor-pointer transition-all duration-200 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start">
+                <div>
+                  <h5 class="font-serif text-base font-bold text-white tracking-tight">${item.name}</h5>
+                  <span class="text-[10px] text-amberAccent-500 font-semibold tracking-wider block uppercase">${item.distillery}</span>
+                </div>
+                <button onclick="deleteJournalEntry(${item.id}, event)" class="p-1 text-peat-600 hover:text-red-400 transition-colors" title="Remove Entry">
+                  <i class="fa-solid fa-circle-xmark"></i>
+                </button>
+              </div>
+              <p class="text-[11px] text-peat-400 italic mt-2 line-clamp-2 leading-relaxed">"${item.notes}"</p>
+            </div>
+            
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-peat-800/60 text-[10px]">
+              <span class="text-peat-500">${item.age}</span>
+              <span class="text-amberAccent-400 font-bold">${"⭐".repeat(item.rating)}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      listContainer.innerHTML = html;
+    }
+
+    function clearJournal() {
+      if (confirm("Are you sure you want to clear your entire personal cellar journal logs? This action is irreversible.")) {
+        cellarLogs = [];
+        localStorage.setItem('peat_tide_cellar', JSON.stringify(cellarLogs));
+        renderJournalLogs();
+      }
+    }
+
+    function exportJournal() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cellarLogs));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `islay_peat_tide_cellar_${new Date().toISOString().split('T')[0]}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    // ================= INITIALIZATION & LIFECYCLE MANAGEMENT =================
+    window.onload = function () {
+      // 1. Fetch cellars stored in cache
+      const cached = localStorage.getItem('peat_tide_cellar');
+      if (cached) {
+        cellarLogs = JSON.parse(cached);
+      } else {
+        // Fallback default starter dram cellar
+        cellarLogs = [
+          {
+            id: 1101,
+            name: "Quarter Cask Double Oak",
+            distillery: "Laphroaig",
+            age: "48% / NAS",
+            rating: 5,
+            notes: "Vibrant medicine, sweet iodine. Intense peat finish that has a creamy, vanilla-scented undertone from small cask quarter woods.",
+            flavor: { peat: 90, smoke: 80, brine: 95, sweet: 45, spice: 60, fruit: 35 }
+          },
+          {
+            id: 1102,
+            name: "Distillers Edition Sherried Classic",
+            distillery: "Lagavulin",
+            age: "43% / 16 Years",
+            rating: 5,
+            notes: "Unbelievable dark plum sherry sweet balancing an ash campfire aroma. Warm chocolate-covered coastal peat.",
+            flavor: { peat: 80, smoke: 85, brine: 60, sweet: 85, spice: 80, fruit: 80 }
+          }
+        ];
+        localStorage.setItem('peat_tide_cellar', JSON.stringify(cellarLogs));
+      }
+
+      // 2. Initial tab calculation & rendering loops
+      switchTab('finder');
+      initCompassChart();
+
+      if (cellarLogs.length > 0) {
+        renderJournalLogs();
+        selectJournalDram(cellarLogs[0].id);
+      } else {
+        resetCompassChart();
+      }
+    };
+  </script>
+</body>
+</html>
